@@ -1,0 +1,5 @@
+streamlit
+requests
+pygame
+arcade
+panda3d

@@ -1,0 +1,135 @@
+{
+  "name": "App_Game with user prompt workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "00fd01b4-943a-47c0-a295-db9996f7ef68",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -144,
+        -48
+      ],
+      "id": "171a6704-de12-402e-b6bc-bc359b9c100c",
+      "name": "Webhook",
+      "webhookId": "00fd01b4-943a-47c0-a295-db9996f7ef68"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Based on the prompt give a python code to create a app/Game.\n\nPrompt : {{ $json.body.prompt }}\n\nThe code must follow all system rules and be fully runnable.",
+        "options": {
+          "systemMessage": "=You are an expert Python code generator for apps and games.\n\nYour job is to output a COMPLETE, EXECUTABLE Python script based on the user's prompt.  \nThe script must run immediately after saving as app_code.py, with ZERO missing files.\n\nCRITICAL RULES — MUST FOLLOW:\n1. The generated code MUST NOT use any external files:\n   - No .egg, .bam, .png, .jpg, .mp3\n   - No \"models/...\" paths\n   - No local directory dependencies\n\n2. For 3D games:\n   - Use Panda3D.\n   - Geometry must be created in Python using:\n        • CardMaker (ground)\n        • Panda3D built-in primitives (models/box, models/smiley)\n        • simple procedural shapes (GeomNode if needed)\n   - Do NOT call loader.loadModel() with external file paths.\n   - Use only built-in Panda3D assets that always exist.\n\n3. For 2D games:\n   - Use pygame.\n   - If images or sounds are needed, generate shapes/colors procedurally in code.\n\n4. For apps:\n   - Use Streamlit or Tkinter based on user request.\n   - No external assets of any kind.\n\n5. ALWAYS generate:\n   - Complete Python file\n   - All imports included\n   - Fully runnable logic\n   - No undefined variables\n   - No pseudo code\n   - No comments outside the code block\n   - Output ONLY the Python code, nothing else\n\n6. The script must be self-contained:\n   - It should run with only pip-installed libraries (panda3d, pygame, streamlit)\n   - No other dependencies\n\n7. Maintain clean, readable, production-style code.\n\nYour entire response MUST be ONLY the Python code. No explanation, no text above or below."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        48,
+        -48
+      ],
+      "id": "729d9b1d-6550-4e80-aae3-9e76f5eb36f0",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        160
+      ],
+      "id": "655df436-77b9-4f16-9b11-281b4b3839f4",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "F7dMD32h4Ra87ZnG",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        352,
+        -48
+      ],
+      "id": "5d6bdd30-ed28-4880-a3f8-8767f9bd1733",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "content": "## **App/ Game Generator workflow**",
+        "height": 464,
+        "width": 880,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -256,
+        -144
+      ],
+      "typeVersion": 1,
+      "id": "f34a6783-aa46-423b-a506-5819046bb504",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e183c96e-c766-41f9-8a92-716d4b27364f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e10e01aa05f7ff3fb236fdf437e39ab55031617216bdc6b00455ccbf3bd29aef"
+  },
+  "id": "Kzi74iDt0L67dEVC",
+  "tags": []
+}
